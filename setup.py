@@ -1,12 +1,3 @@
-
-To create a setup.py file and turn your project into a pip installable package, you can follow these steps:
-
-Create a setup.py file in the root directory of your project (phalanx_customizer).
-
-Open the setup.py file and add the following code:
-
-python
-Copy code
 from setuptools import setup, find_packages
 
 setup(
