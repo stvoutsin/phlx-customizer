@@ -19,7 +19,7 @@ This module provides functionality to customize environment configuration files 
 
 4. Execute the environment_customizer.py script:
 
-        python environment_customizer.py <phalanx_repo_path> <base_env_yaml> <new_env_yaml>
+        python phalanx_customizer.py <phalanx_repo_path> <base_env_yaml> <new_env_yaml>
 
 
 4. The customized environment files will be created based on the provided configurations.
