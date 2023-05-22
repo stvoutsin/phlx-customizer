@@ -1,11 +1,16 @@
+"""
+Phalanx Customizer class
+Used to generate new environments for the Phalanx project
+
+"""
 import os
+import argparse
 import shutil
 import fileinput
 from typing import List
 import re
 from dataclasses import dataclass
 import yaml
-import argparse
 
 
 @dataclass
@@ -40,9 +45,9 @@ class EnvironmentCustomizer:
     phalanx_repo_path: str
 
     def create_environment_from_yaml(
-        self,
-        base_env_yaml: str,
-        new_env_yaml: str
+            self,
+            base_env_yaml: str,
+            new_env_yaml: str
     ) -> None:
         """
         Customize the environment configuration files using YAML files.
@@ -68,14 +73,13 @@ class EnvironmentCustomizer:
         """
         with open(yaml_file) as file:
             data = yaml.safe_load(file)
-            # noinspection PyUnresolvedReferences
             kwargs = {key: data.get(key) for key in Environment.__dataclass_fields__}
             return Environment(**kwargs)
 
     def create_environment(
-        self,
-        base_env: Environment,
-        new_env: Environment
+            self,
+            base_env: Environment,
+            new_env: Environment
     ) -> None:
         """
         Customize the environment configuration files.
@@ -92,7 +96,8 @@ class EnvironmentCustomizer:
             new_file_path = self.create_custom_file(file_path, base_env.name, new_env.name)
 
             for param in ("name", "base_url", "nfs", "github_oauth_client_id"):
-                self.replace_string_in_file(new_file_path, getattr(base_env, param), getattr(new_env, param))
+                self.replace_string_in_file(new_file_path, getattr(base_env, param),
+                                            getattr(new_env, param))
 
         # Update nginx-ingress config file
         self.update_nginx_config(new_env)
@@ -110,7 +115,7 @@ class EnvironmentCustomizer:
         """
         def _find_subpath(directory: str) -> List[str]:
             files = []
-            for root, _, filenames in (os.walk(f'{self.phalanx_repo_path}/{directory}')):
+            for root, _, filenames in os.walk(f'{self.phalanx_repo_path}/{directory}'):
                 for filename in filenames:
                     if environment_base in filename:
                         files.append(os.path.join(root, filename))
@@ -150,8 +155,8 @@ class EnvironmentCustomizer:
                 print(line.replace(old_string, new_string), end='')
 
     def update_tap(
-        self,
-        new_env: Environment,
+            self,
+            new_env: Environment,
     ) -> None:
         """
         Update the tap config file with new settings.
@@ -164,16 +169,18 @@ class EnvironmentCustomizer:
         with fileinput.FileInput(nginx_config_path, inplace=True) as file:
             for line in file:
                 if 'gcsBucket' in line:
-                    line = re.sub(r'gcsBucket: .*', f'gcsBucket: "{new_env.gcs_bucket}"', line)
+                    line = re.sub(r'gcsBucket: .*',
+                                  f'gcsBucket: "{new_env.gcs_bucket}"', line)
                 if 'gcsBucketUrl:' in line:
-                    line = re.sub(r'gcsBucketUrl: .*', f'gcsBucketUrl: "{new_env.gcs_bucket_url}"', line)
+                    line = re.sub(r'gcsBucketUrl: .*',
+                                  f'gcsBucketUrl: "{new_env.gcs_bucket_url}"', line)
                 if 'host:' in line:
                     line = re.sub(r'host: .*', f'host: "{new_env.qserv}"', line)
                 print(line, end='')
 
     def update_nginx_config(
-        self,
-        new_env: Environment,
+            self,
+            new_env: Environment,
     ) -> None:
         """
         Update the nginx-ingress config file with new settings.
@@ -186,16 +193,20 @@ class EnvironmentCustomizer:
         with fileinput.FileInput(nginx_config_path, inplace=True) as file:
             for line in file:
                 if 'loadBalancerIP' in line:
-                    line = re.sub(r'loadBalancerIP: .*', f'loadBalancerIP: "{new_env.loadbalancerip}"', line)
+                    line = re.sub(r'loadBalancerIP: .*',
+                                  f'loadBalancerIP: "{new_env.loadbalancerip}"', line)
                 print(line, end='')
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Phalanx Environment Customizer')
-    parser.add_argument('phalanx_repo_path', help='Path to the Phalanx repository')
-    parser.add_argument('base_env_yaml', help='Path to the YAML file containing base environment configuration')
-    parser.add_argument('new_env_yaml', help='Path to the YAML file containing new environment configuration')
-    args = parser.parse_args()
+    PARSER = argparse.ArgumentParser(description='Phalanx Environment Customizer')
+    PARSER.add_argument('phalanx_repo_path',
+                        help='Path to the Phalanx repository')
+    PARSER.add_argument('base_env_yaml',
+                        help='Path to the YAML file containing base environment configuration')
+    PARSER.add_argument('new_env_yaml',
+                        help='Path to the YAML file containing new environment configuration')
+    ARGS = PARSER.parse_args()
 
-    customizer = EnvironmentCustomizer(args.phalanx_repo_path)
-    customizer.create_environment_from_yaml(args.base_env_yaml, args.new_env_yaml)
+    CUSTOMIZER = EnvironmentCustomizer(ARGS.phalanx_repo_path)
+    CUSTOMIZER.create_environment_from_yaml(ARGS.base_env_yaml, ARGS.new_env_yaml)

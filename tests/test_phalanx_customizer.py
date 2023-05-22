@@ -1,10 +1,16 @@
+"""
+Tests for Phalanx Customizer module
+"""
+import os
 import unittest
 import tempfile
 from phalanx_customizer import EnvironmentCustomizer
-import os
 
 
 class TestPhalanxCustomizer(unittest.TestCase):
+    """
+    Phalanx Customizer unittest test class
+    """
     def setUp(self):
         current_dir = os.getcwd()
         parent_dir = os.path.dirname(os.getcwd())
@@ -15,6 +21,9 @@ class TestPhalanxCustomizer(unittest.TestCase):
         pass
 
     def test_parse_environment_yaml(self):
+        """
+        Test that parsing works correctly
+        """
         yaml_data = """
         name: TestEnvironment
         base_url: http://example.com
@@ -47,11 +56,14 @@ class TestPhalanxCustomizer(unittest.TestCase):
         self.assertEqual(environment.github_oauth_client_id, 'abc123')
 
     def test_create_environment_from_yaml(self):
+        """
+        Assert that the new environment was created
+        """
         customizer = EnvironmentCustomizer(self.phalanx_repo_path)
-        customizer.create_environment_from_yaml(f"{self.envs_path}/roe.yaml", f"{self.envs_path}/rsptest.yaml")
-        self.assertTrue(os.path.exists(f"{self.phalanx_repo_path}/environments/values-rsptest.yaml"))
-
-    # TODO: Add more test methods for other functions in EnvironmentCustomizer
+        customizer.create_environment_from_yaml(f"{self.envs_path}/roe.yaml",
+                                                f"{self.envs_path}/rsptest.yaml")
+        self.assertTrue(os.path.exists(
+            f"{self.phalanx_repo_path}/environments/values-rsptest.yaml"))
 
 
 if __name__ == '__main__':
