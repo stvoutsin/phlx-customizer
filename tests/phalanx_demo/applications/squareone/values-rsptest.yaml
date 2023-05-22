@@ -1,0 +1,6 @@
+config:
+  siteName: "Rubin Science Platform"
+  semaphoreUrl: "https://rsptest.lsst.ac.uk/semaphore"
+
+ingress:
+  tls: false
