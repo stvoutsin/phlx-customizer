@@ -9,17 +9,15 @@ import shutil
 import fileinput
 from typing import List
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 import yaml
 
 
 @dataclass
-class Environment:
+class EnvironmentConfig:
     """
-    Represents an environment configuration.
+    Represents the configuration details of an environment.
     """
-    name: str
-    base_url: str
     loadbalancerip: str = None
     vault_path: str = None
     nfs: str = None
@@ -28,13 +26,14 @@ class Environment:
     qserv: str = None
     github_oauth_client_id: str = None
 
-    def __post_init__(self):
-        """
-        Post-initialization hook to set default values.
-        """
-        if self.vault_path is None:
-            self.vault_path = self.name
-
+@dataclass
+class Environment:
+    """
+    Represents an environment configuration.
+    """
+    name: str
+    base_url: str
+    config: EnvironmentConfig = EnvironmentConfig()
 
 @dataclass
 class EnvironmentCustomizer:
@@ -73,9 +72,9 @@ class EnvironmentCustomizer:
         """
         with open(yaml_file) as file:
             data = yaml.safe_load(file)
-            kwargs = {key: data.get(key) for key in Environment.__dataclass_fields__}
-            return Environment(**kwargs)
-
+            kwargs = {field.name: data.get(field.name) for field in fields(EnvironmentConfig)}
+            config = EnvironmentConfig(**kwargs)
+            return Environment(name=data.get("name"), base_url=data.get("base_url"), config=config)
     def create_environment(
             self,
             base_env: Environment,
@@ -95,10 +94,14 @@ class EnvironmentCustomizer:
         for file_path in matching_files:
             new_file_path = self.create_custom_file(file_path, base_env.name, new_env.name)
 
-            for param in ("name", "base_url", "nfs", "github_oauth_client_id"):
+            for param in ("nfs", "github_oauth_client_id"):
+                new_config, base_config = new_env.config, base_env.config
+                self.replace_string_in_file(new_file_path, getattr(base_config, param),
+                                            getattr(new_config, param))
+
+            for param in ("name", "base_url"):
                 self.replace_string_in_file(new_file_path, getattr(base_env, param),
                                             getattr(new_env, param))
-
         # Update nginx-ingress config file
         self.update_nginx_config(new_env)
         self.update_tap(new_env)
@@ -170,12 +173,12 @@ class EnvironmentCustomizer:
             for line in file:
                 if 'gcsBucket' in line:
                     line = re.sub(r'gcsBucket: .*',
-                                  f'gcsBucket: "{new_env.gcs_bucket}"', line)
+                                  f'gcsBucket: "{new_env.config.gcs_bucket}"', line)
                 if 'gcsBucketUrl:' in line:
                     line = re.sub(r'gcsBucketUrl: .*',
-                                  f'gcsBucketUrl: "{new_env.gcs_bucket_url}"', line)
+                                  f'gcsBucketUrl: "{new_env.config.gcs_bucket_url}"', line)
                 if 'host:' in line:
-                    line = re.sub(r'host: .*', f'host: "{new_env.qserv}"', line)
+                    line = re.sub(r'host: .*', f'host: "{new_env.config.qserv}"', line)
                 print(line, end='')
 
     def update_nginx_config(
@@ -194,7 +197,7 @@ class EnvironmentCustomizer:
             for line in file:
                 if 'loadBalancerIP' in line:
                     line = re.sub(r'loadBalancerIP: .*',
-                                  f'loadBalancerIP: "{new_env.loadbalancerip}"', line)
+                                  f'loadBalancerIP: "{new_env.config.loadbalancerip}"', line)
                 print(line, end='')
 
 
