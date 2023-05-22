@@ -1,0 +1,23 @@
+name: roe
+
+# Base URL for env
+base_url: rsp.lsst.ac.uk
+
+# Load Balancer IP for NGINX Ingress
+loadbalancerip: 192.41.122.16
+
+# Vault
+vault_path: roe
+
+# NFS Server
+nfs: 192.41.122.33
+
+# Object Storage Info
+gcs_bucket: async
+gcs_bucket_url: https://somerville.ed.ac.uk:6780
+
+# Qserv
+qserv: 192.41.122.228:30040
+
+# Github OAUTH app
+github_oauth_client_id: 564b7b92b6c40a7c2348
