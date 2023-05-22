@@ -70,11 +70,12 @@ class EnvironmentCustomizer:
         Returns:
             Environment: Parsed environment configuration.
         """
-        with open(yaml_file) as file:
+        with open(yaml_file, encoding="utf-8") as file:
             data = yaml.safe_load(file)
             kwargs = {field.name: data.get(field.name) for field in fields(EnvironmentConfig)}
             config = EnvironmentConfig(**kwargs)
             return Environment(name=data.get("name"), base_url=data.get("base_url"), config=config)
+
     def create_environment(
             self,
             base_env: Environment,
