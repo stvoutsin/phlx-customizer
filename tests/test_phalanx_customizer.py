@@ -47,13 +47,13 @@ class TestPhalanxCustomizer(unittest.TestCase):
 
         self.assertEqual(environment.name, 'TestEnvironment')
         self.assertEqual(environment.base_url, 'http://example.com')
-        self.assertEqual(environment.loadbalancerip, '192.168.0.1')
-        self.assertEqual(environment.vault_path, 'path/to/vault')
-        self.assertEqual(environment.nfs, 'nfs.example.com')
-        self.assertEqual(environment.gcs_bucket, 'example-bucket')
-        self.assertEqual(environment.gcs_bucket_url, 'http://example-bucket.com')
-        self.assertEqual(environment.qserv, 'qserv.example.com')
-        self.assertEqual(environment.github_oauth_client_id, 'abc123')
+        self.assertEqual(environment.config.loadbalancerip, '192.168.0.1')
+        self.assertEqual(environment.config.vault_path, 'path/to/vault')
+        self.assertEqual(environment.config.nfs, 'nfs.example.com')
+        self.assertEqual(environment.config.gcs_bucket, 'example-bucket')
+        self.assertEqual(environment.config.gcs_bucket_url, 'http://example-bucket.com')
+        self.assertEqual(environment.config.qserv, 'qserv.example.com')
+        self.assertEqual(environment.config.github_oauth_client_id, 'abc123')
 
     def test_create_environment_from_yaml(self):
         """
