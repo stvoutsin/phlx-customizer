@@ -4,13 +4,13 @@ name: rsptest
 base_url: rsptest.lsst.ac.uk
 
 # LoadBalancer
-loadbalancerip: 192.41.122.13
+loadbalancerip: 192.41.122.208
 
 # Vault
 vault_path: rsptest
 
 # NFS Server IP
-nfs: 192.41.122.333
+nfs: 192.41.122.94
 
 # Object store
 gcs_bucket: async-test
