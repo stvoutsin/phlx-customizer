@@ -1,12 +1,17 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='phalanx-customizer',
+    name='phalanx_customizer',
     version='0.1.0',
     author='Stelios Voutsinas',
-    author_email='stv@roe.ac.uk',
+    author_email='sv@sv.com',
     description='Phalanx Customizer Package',
     packages=find_packages(),
+    entry_points={
+        'console_scripts': [
+            'phalanx_customizer = phalanx_customizer.main:main',
+        ],
+    },
     install_requires=[
         'PyYAML',
     ],

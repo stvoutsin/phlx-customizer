@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phalanx_customizer"
+version = "0.1.0"
+description = "A tool to bootstrap a Phalanx environment based on another known one"
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = ["phalanx", "environment", "customizer"]
+license = { text = "MIT" }
+authors = [
+    { name = "Stelios Voutsinas", email = "sv@sv.com" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+dependencies = [
+    "pyyaml"
+]
+
+[project.scripts]
+phalanx_customizer = "phalanx_customizer.main:main"
+
